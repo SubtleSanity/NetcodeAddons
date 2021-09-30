@@ -1,16 +1,16 @@
 ## What is it?  
-This some extra features added on to Unitys Netcode for GameObjects  
+This adds some extra features on to Unitys Netcode for GameObjects  
 
 - Adds NetworkReferenceXXX types to handle sending references over the network  
-- Adds NetworkVariableXXX types to simplify using NetworkReferenceXXX types  
+- Adds NetworkVariableXXX types to simplify using NetworkReferenceXXX types in networked variables  
 - Adds system for sending references to assets over the network (i.e: ScriptableObjects)  
-- Adds Property Drawers for standard NetworkVariables  
-- Adds Property Drawers for the above reference types  
+- Adds Property Drawer for NetworkVariable<> that properly supports updating the NetworkVariable when value is changed in inspector  
+- Adds Property Drawers for the NetworkReferenceXXX types to allow references to be assigned in inspector with proper typing  
 
 ## How do I use it?
 
 Install Unitys Netcode package  
-&emsp; This is made for the develop branch. It won't work with the main branch  
+&emsp; This is made for the develop branch. It doesn't support the main branch  
 &emsp; PackageManager -> Add package from git URL  
 &emsp; https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#develop  
 
