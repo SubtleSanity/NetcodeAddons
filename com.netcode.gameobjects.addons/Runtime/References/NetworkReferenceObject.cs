@@ -77,5 +77,9 @@ namespace Unity.Netcode.Addons
         {
             return networkObjectId.GetHashCode();
         }
+        public override string ToString()
+        {
+            return string.Format("NetworkReferenceObject: {0}", networkObjectId);
+        }
     }
 }

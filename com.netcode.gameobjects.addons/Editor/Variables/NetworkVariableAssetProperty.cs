@@ -33,10 +33,16 @@ namespace Unity.Netcode.Addons.Editor
                 var newAsset = EditorGUI.ObjectField(contentPosition, GUIContent.none, currentAsset, genericType, true);
 
                 if (currentAsset != newAsset)
-                {
-                    assetGlobalId = NetworkAssetManager.Singleton.GetGlobalId(newAsset);
-                    assetProperty.intValue = (int)assetGlobalId;
-                }
+                    if (newAsset != null)
+                    {
+                        assetGlobalId = default;
+                        assetProperty.intValue = (int)assetGlobalId;
+                    }
+                    else
+                    {
+                        assetGlobalId = default;
+                        assetProperty.intValue = (int)assetGlobalId;
+                    }
 
                 EditorGUI.EndDisabledGroup();
                 EditorGUI.EndProperty();

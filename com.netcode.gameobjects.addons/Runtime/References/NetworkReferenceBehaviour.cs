@@ -105,5 +105,9 @@ namespace Unity.Netcode.Addons
             hashCode = hashCode * -1521134295 + networkBehaviourId.GetHashCode();
             return hashCode;
         }
+        public override string ToString()
+        {
+            return string.Format("NetworkReferenceBehaviour: {0}, {1}", networkObjectId, networkBehaviourId);
+        }
     }
 }

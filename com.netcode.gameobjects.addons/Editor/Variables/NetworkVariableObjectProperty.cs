@@ -31,10 +31,16 @@ namespace Unity.Netcode.Addons.Editor
                 var newObject = EditorGUI.ObjectField(contentPosition, GUIContent.none, currentObject, typeof(NetworkObject), true) as NetworkObject;
 
                 if (currentObject != newObject)
-                {
-                    objectGlobalId = newObject.NetworkObjectId;
-                    objectProperty.longValue = (long)objectGlobalId;
-                }
+                    if (newObject != null)
+                    {
+                        objectGlobalId = newObject.NetworkObjectId;
+                        objectProperty.longValue = (long)objectGlobalId;
+                    }
+                    else
+                    {
+                        objectGlobalId = default;
+                        objectProperty.longValue = (long)objectGlobalId;
+                    }
 
                 EditorGUI.EndDisabledGroup();
                 EditorGUI.EndProperty();
@@ -76,8 +82,6 @@ namespace Unity.Netcode.Addons.Editor
             if (Application.isPlaying == false)
                 return true;
             if (NetworkManager.Singleton == null)
-                return true;
-            if (NetworkAssetManager.Singleton == null)
                 return true;
             if (NetworkManager.Singleton.IsHost)
                 return false;

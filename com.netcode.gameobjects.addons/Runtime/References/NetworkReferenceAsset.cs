@@ -75,6 +75,10 @@ namespace Unity.Netcode.Addons
         {
             return assetGlobalId.GetHashCode();
         }
+        public override string ToString()
+        {
+            return string.Format("NetworkReferenceAsset: {0}", assetGlobalId);
+        }
     }
 
 }

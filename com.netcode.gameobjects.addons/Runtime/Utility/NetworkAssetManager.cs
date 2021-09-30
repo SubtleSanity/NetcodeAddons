@@ -8,6 +8,7 @@ using UnityObject = UnityEngine.Object;
 
 namespace Unity.Netcode.Addons
 {
+    [RequireComponent(typeof(NetworkManager))]
     public class NetworkAssetManager : MonoBehaviour
     {
         [SerializeField] [HideInInspector]
@@ -68,14 +69,6 @@ namespace Unity.Netcode.Addons
             var success = globalToAsset.TryGetValue(globalId, out var result);
             asset = result as T;
             return success;
-        }
-        public void AddManifest(NetworkAssetManifest manifest)
-        {
-            AddAssetsFromManifest(manifest);
-        }        
-        public void RemoveManifest(NetworkAssetManifest manifest)
-        {
-            RemoveAssetsFromManifest(manifest);
         }
 
 

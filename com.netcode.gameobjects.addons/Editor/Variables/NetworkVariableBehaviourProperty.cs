@@ -34,13 +34,22 @@ namespace Unity.Netcode.Addons.Editor
                 var currentBehaviour = currentObject.GetNetworkBehaviourAtOrderIndex(behaviourOrderId);
                 var newBehaviour = EditorGUI.ObjectField(contentPosition, GUIContent.none, currentBehaviour, genericType, true) as NetworkBehaviour;
 
+
                 if (currentObject != newBehaviour)
-                {
-                    objectGlobalId = newBehaviour.NetworkObjectId;
-                    objectProperty.longValue = (long)objectGlobalId;
-                    behaviourOrderId = newBehaviour.NetworkBehaviourId;
-                    behaviourProperty.intValue = (ushort)behaviourOrderId;
-                }
+                    if (newBehaviour != null)
+                    {
+                        objectGlobalId = newBehaviour.NetworkObjectId;
+                        objectProperty.longValue = (long)objectGlobalId;
+                        behaviourOrderId = newBehaviour.NetworkBehaviourId;
+                        behaviourProperty.intValue = (ushort)behaviourOrderId;
+                    }
+                    else
+                    {
+                        objectGlobalId = default;
+                        objectProperty.longValue = (long)objectGlobalId;
+                        behaviourOrderId = default;
+                        behaviourProperty.intValue = (ushort)behaviourOrderId;
+                    }
 
                 EditorGUI.EndDisabledGroup();
                 EditorGUI.EndProperty();
@@ -82,8 +91,6 @@ namespace Unity.Netcode.Addons.Editor
             if (Application.isPlaying == false)
                 return true;
             if (NetworkManager.Singleton == null)
-                return true;
-            if (NetworkAssetManager.Singleton == null)
                 return true;
             if (NetworkManager.Singleton.IsHost)
                 return false;
