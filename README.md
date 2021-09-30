@@ -28,8 +28,8 @@ Modify Unity.Netcode
 ## NetworkReferenceXXX types
 
 - NetworkReferenceObject for NetworkObject
-- NetworkReferenceBehaviour for NetworkBehaviour
-- NetworkReferenceAsset for assets (anything inheriting UnityEngine.Object, including ScriptableObject)
+- NetworkReferenceBehaviour<> for NetworkBehaviour
+- NetworkReferenceAsset<> for assets (anything inheriting UnityEngine.Object, including ScriptableObject)
 
 These work by storing the global network id number for the object/component/asset  
 The client can then look up the local copy of the object.  
@@ -39,7 +39,7 @@ If the object doesn't exist it will return null.
 
 You can use these as parameters in RPCs  
 You can use these in NetworkVariable<>  
-Use in NetworkVariable<> can be simplified by using the specific NetworkVariableXXX types:  
+Use in NetworkVariable<> can be simplified by using the NetworkVariableXXX types:  
 - NetworkVariableObject
 - NetworkVariableBehaviour
 - NetworkVariableAsset
