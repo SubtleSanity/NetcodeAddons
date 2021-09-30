@@ -1,16 +1,16 @@
 ## What is it?  
-This some extra features added on to Unitys Netcode for GameObjects  
+This adds some extra features on to Unitys Netcode for GameObjects  
 
 - Adds NetworkReferenceXXX types to handle sending references over the network  
-- Adds NetworkVariableXXX types to simplify using NetworkReferenceXXX types  
+- Adds NetworkVariableXXX types to simplify using NetworkReferenceXXX types in networked variables  
 - Adds system for sending references to assets over the network (i.e: ScriptableObjects)  
-- Adds Property Drawers for standard NetworkVariables  
-- Adds Property Drawers for the above reference types  
+- Adds Property Drawer for NetworkVariable<> that properly supports updating the NetworkVariable when value is changed in inspector  
+- Adds Property Drawers for the NetworkReferenceXXX types to allow references to be assigned in inspector with proper typing  
 
 ## How do I use it?
 
 Install Unitys Netcode package  
-&emsp; This is made for the develop branch. It won't work with the main branch  
+&emsp; This is made for the develop branch. It doesn't support the main branch  
 &emsp; PackageManager -> Add package from git URL  
 &emsp; https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#develop  
 
@@ -57,9 +57,12 @@ This allows for proper organisation of networked assets instead of one monolithi
 
 ## Custom property drawers
 
-I've implemented a proper PropertyDrawer for NetworkVariable<> so NetworkVariables will show up in the inspector correctly.  
+I've implemented a PropertyDrawer for NetworkVariable<> so NetworkVariables will show up in the inspector correctly.  
 It handles making the variables readonly when the project is not running, is not connected or is running as a client (since only server can edit variables)  
+It handles assigning values in the inspector correctly. The new value will be sent across the network exactly the same as if you had set the value on the NetworkVariable by code.
 
-There are also PropertyDrawer for the NetworkReferenceXXX types, so they display the reference in the inspect instead of the internal Id numbers that they actually contain and you can assign objects to them by dragging like normal.  
+There are also PropertyDrawer for the NetworkReferenceXXX types, so they display the reference in the inspector instead of the internal Id numbers that they actually contain and you can assign objects to them by dragging like normal.  
 
-For some reason unity didn't do that and instead implemented a custom editor for NetworkBehaviour that uses reflection on the class to find all the NetworkVariable and manually draw them. I don't know why or what the benefit is over the standard method of customising the drawing of properties. My PropertyDrawers replace this functionality entirely, so to prevent their class editor from also drawing the variables i've added an empty editor for NetworkBehaviour to override it and just draw the standard editor.  
+Unity didn't use property drawers for NetworkVariables and instead implemented a custom editor for NetworkBehaviour that uses reflection on the class to find all the NetworkVariables and manually draw them seperately to the rest of the class. I'm not quite sure what the benefit of doing it that way was but it blocks NetworkVariables from being drawn the normal way. It also means if a user were to implement a custom editor for a class that inherit NetworkBehaviour they would lose the ability to see NetworkVariables in the editor as their editor would overrule the unity one. Their approach also involves manually reflecting each type that could potentially be drawn, meaning that it's limited to only drawing known primitive types and won't support user defined structs etc.
+
+The new PropertyDrawers replace the functionality of drawing NetworkVariables entirely, address all of the above issues and will correctly draw all types supported by NetworkVariable<>. To prevent the unity custom editor from applying and drawing the variables twice i've added an empty editor for NetworkBehaviour to overrule it and just draw the standard editor.  
