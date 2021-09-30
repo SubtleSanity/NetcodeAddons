@@ -1,4 +1,4 @@
-# What is it?
+## What is it?
 This some extra features added on to Unitys Netcode for GameObjects
 
 - Adds NetworkReferenceXXX types to handle sending references over the network
@@ -7,7 +7,7 @@ This some extra features added on to Unitys Netcode for GameObjects
 - Adds Property Drawers for standard NetworkVariables
 - Adds Property Drawers for the above reference types
 
-# How do I use it?
+## How do I use it?
 
 Install Unitys Netcode package
   This is made for the develop branch. It won't work with the main branch
@@ -25,7 +25,7 @@ Modify Unity.Netcode
   The function is NetworkObject.GetNetworkBehaviourAtOrderIndex()
   You can find it in the Unity.Netcode.Runtime project
 
-# NetworkReferenceXXX types
+## NetworkReferenceXXX types
 
 - NetworkReferenceObject for NetworkObject
 - NetworkReferenceBehaviour for NetworkBehaviour
@@ -44,7 +44,7 @@ Use in NetworkVariable<> can be simplified by using the specific NetworkVariable
 - NetworkVariableBehaviour
 - NetworkVariableAsset
 
-# Referencing assets across the network
+## Referencing assets across the network
 
 To set up and use the asset referencing system:
   Add a NetworkAssetManager component to your NetworkManager gameobject
@@ -55,7 +55,7 @@ To set up and use the asset referencing system:
 Assets are added using ScriptableObjects instead of adding them directly to the manager
 This allows for proper organisation of networked assets instead of one monolithic list on a scene component
 
-# Custom property drawers
+## Custom property drawers
 
 I've implemented a proper PropertyDrawer for NetworkVariable<> so NetworkVariables will show up in the inspector correctly.
 It handles making the variables readonly when the project is not running, is not connected or is running as a client (since only server can edit variables)
@@ -64,7 +64,7 @@ There are also PropertyDrawer for the NetworkReferenceXXX types, so they display
 
 For some reason unity didn't do that and instead implemented a custom editor for NetworkBehaviour that uses reflection on the class to find all the NetworkVariable and manually draw them. I don't know why or what the benefit is over the standard method of customising the drawing of properties. My PropertyDrawers replace this functionality entirely, so to prevent their class editor from also drawing the variables i've added an empty editor for NetworkBehaviour to override it and just draw the standard editor.
 
-# Regarding NetworkList
+## Regarding NetworkList
 I was planning to handle NetworkList in the inspect as well, but ...
 Unity has used NativeList as the internal container to store the values, which means that NetworkList can't support serialization properly. This means I can't make a custom PropertyDrawer for it and i can't use standard editor gui functionality to draw it. There are some hacky methods i could use to draw it manually but it would be more limited.
 
