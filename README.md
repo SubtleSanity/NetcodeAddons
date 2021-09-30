@@ -45,8 +45,9 @@ Use in NetworkVariable<> can be simplified by using the specific NetworkVariable
 - NetworkVariableAsset
 
 ## Referencing assets across the network
+This system will allow you to send references to assets in RPCs and NetworkVariables. Useful for sending a reference to a scriptable object but can be used for any asset that inherits from UnityEngine.Object, including meshes, materials, etc. It works by creating a registry of assets with id numbers. The server can simply send the id number to a client and the client will look up the local copy of the asset.
 
-To set up and use the asset referencing system:  
+To set up the register of assets:  
 &emsp; Add a NetworkAssetManager component to your NetworkManager gameobject  
 &emsp; Create a NetworkAssetManifest by right clicking in the project explorer and selecting Netcode/Network Asset Manifest  
 &emsp; Add the NetworkAssetManifest to the NetworkAssetManager  
@@ -54,6 +55,9 @@ To set up and use the asset referencing system:
 
 Assets are added using ScriptableObjects instead of adding them directly to the manager  
 This allows for proper organisation of networked assets instead of one monolithic list on a scene component  
+
+Use NetworkReferenceAsset<> to send an asset reference in an RPC    
+Use NetworkVariableAsset to keep an asset reference synced in a variable
 
 ## Custom property drawers
 
