@@ -35,7 +35,7 @@ namespace Unity.Netcode.Addons.Editor
                 if (currentAsset != newAsset)
                     if (newAsset != null)
                     {
-                        assetGlobalId = default;
+                        assetGlobalId = NetworkAssetManager.Singleton.GetGlobalId(newAsset);
                         assetProperty.intValue = (int)assetGlobalId;
                     }
                     else

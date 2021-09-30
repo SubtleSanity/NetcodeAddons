@@ -22,7 +22,7 @@ namespace Unity.Netcode.Addons.Editor
             var objectProperty = property.FindPropertyRelative("networkObjectId");
             var objectGlobalId = (ulong)objectProperty.longValue;
             var behaviourProperty = property.FindPropertyRelative("networkBehaviourId");
-            var behaviourOrderId = (ushort)objectProperty.intValue;
+            var behaviourOrderId = (ushort)behaviourProperty.intValue;
             var contentPosition = EditorGUI.PrefixLabel(position, label);
             var genericType = GetGenericType();
 
@@ -31,7 +31,7 @@ namespace Unity.Netcode.Addons.Editor
                 EditorGUI.BeginDisabledGroup(IsReadonly());
 
                 var currentObject = GetObject(objectGlobalId);
-                var currentBehaviour = currentObject.GetNetworkBehaviourAtOrderIndex(behaviourOrderId);
+                var currentBehaviour = currentObject?.GetNetworkBehaviourAtOrderIndex(behaviourOrderId);
                 var newBehaviour = EditorGUI.ObjectField(contentPosition, GUIContent.none, currentBehaviour, genericType, true) as NetworkBehaviour;
 
 
