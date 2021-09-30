@@ -59,7 +59,8 @@ This allows for proper organisation of networked assets instead of one monolithi
 
 I've implemented a proper PropertyDrawer for NetworkVariable<> so NetworkVariables will show up in the inspector correctly.  
 It handles making the variables readonly when the project is not running, is not connected or is running as a client (since only server can edit variables)  
+It handles assigning values in the inspector correctly. The new value will be sent across the network exactly the same as if you had set the value on the NetworkVariable by code.
 
-There are also PropertyDrawer for the NetworkReferenceXXX types, so they display the reference in the inspect instead of the internal Id numbers that they actually contain and you can assign objects to them by dragging like normal.  
+There are also PropertyDrawer for the NetworkReferenceXXX types, so they display the reference in the inspector instead of the internal Id numbers that they actually contain and you can assign objects to them by dragging like normal.  
 
 For some reason unity didn't do that and instead implemented a custom editor for NetworkBehaviour that uses reflection on the class to find all the NetworkVariable and manually draw them. I don't know why or what the benefit is over the standard method of customising the drawing of properties. My PropertyDrawers replace this functionality entirely, so to prevent their class editor from also drawing the variables i've added an empty editor for NetworkBehaviour to override it and just draw the standard editor.  
