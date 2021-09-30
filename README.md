@@ -65,7 +65,7 @@ There are also PropertyDrawer for the NetworkReferenceXXX types, so they display
 For some reason unity didn't do that and instead implemented a custom editor for NetworkBehaviour that uses reflection on the class to find all the NetworkVariable and manually draw them. I don't know why or what the benefit is over the standard method of customising the drawing of properties. My PropertyDrawers replace this functionality entirely, so to prevent their class editor from also drawing the variables i've added an empty editor for NetworkBehaviour to override it and just draw the standard editor.  
 
 ## Regarding NetworkList
-I was planning to handle NetworkList in the inspect as well, but ...  
+I was planning to handle NetworkList in the inspector as well, but ...  
 Unity has used NativeList as the internal container to store the values, which means that NetworkList can't support serialization properly. This means I can't make a custom PropertyDrawer for it and i can't use standard editor gui functionality to draw it. There are some hacky methods i could use to draw it manually but it would be more limited.
 
 I'm unclear on what the benefit of using NativeList for it is. No functionality in the list uses jobs, nor is the internal list exposed in any way that would allow using it in jobs elsewhere. There's maybe an argument for garbage collection but the only allocations from a managed list here would be when the list expands due to additions, and i'm not convinced that's going to have a noticeable impact.
