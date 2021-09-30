@@ -1,0 +1,10 @@
+{
+  "name": "com.netcode.gameobjects.addons",
+  "displayName": "Netcode for GameObjects: Addons",
+  "description": "Adds additional types and containers to Unity Netcode for GameObjects",
+  "version": "1.0.0",
+  "unity": "2020.3",
+  "dependencies": {
+    "com.unity.netcode.gameobjects": "0.2.0"
+  }
+}

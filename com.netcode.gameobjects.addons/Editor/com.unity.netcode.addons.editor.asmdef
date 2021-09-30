@@ -1,0 +1,17 @@
+{
+    "name": "Unity.Netcode.Addons.Editor",
+    "rootNamespace": "Unity.Netcode.Addons.Editor",
+    "references": [
+        "GUID:b0fff40d02eb89e4e8724df91f0b0502",
+        "GUID:1491147abca9d7d4bb7105af628b223e"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
