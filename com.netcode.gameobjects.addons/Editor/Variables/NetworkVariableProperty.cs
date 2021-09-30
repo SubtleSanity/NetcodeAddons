@@ -20,10 +20,14 @@ namespace Unity.Netcode.Addons.Editor
 
             label.text += " (NetVar)";
 
+
+            var control = EditorGUI.PrefixLabel(position, label);
+
             EditorGUI.BeginDisabledGroup(IsReadonly());
 
             var internalProperty = property.FindPropertyRelative("m_InternalValue");
-            EditorGUI.PropertyField(position, internalProperty, label, true);
+
+            EditorGUI.PropertyField(control, internalProperty, GUIContent.none, true);
 
             EditorGUI.EndDisabledGroup();
             EditorGUI.EndProperty();
@@ -39,14 +43,14 @@ namespace Unity.Netcode.Addons.Editor
         private bool IsReadonly()
         {
             if (Application.isPlaying == false)
-                return false;
-            if (NetworkManager.Singleton == null)
-                return false;
-            if (NetworkManager.Singleton.IsHost)
                 return true;
+            if (NetworkManager.Singleton == null)
+                return true;
+            if (NetworkManager.Singleton.IsHost)
+                return false;
             if (NetworkManager.Singleton.IsServer)
                 return false;
-            return NetworkManager.Singleton.IsClient;
+            return true;
         }
 
     }

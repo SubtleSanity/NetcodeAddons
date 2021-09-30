@@ -10,9 +10,10 @@ namespace Assets.Code
 {
     class TestBehaviour : NetworkBehaviour
     {
-        public NetworkVariable<int> testVar;
+        public int sdfdsfsdfds;
 
-        public NetworkList<int> testList = new NetworkList<int>();
+        [SerializeField]
+        public NetworkVariable<int> testVar;
 
         private void Awake()
         {

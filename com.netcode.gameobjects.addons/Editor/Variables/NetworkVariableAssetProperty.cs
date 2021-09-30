@@ -26,6 +26,7 @@ namespace Unity.Netcode.Addons.Editor
 
             if (SafeToRead())
             {
+                using var disabled = new EditorGUI.DisabledScope(IsReadonly());
                 EditorGUI.BeginDisabledGroup(IsReadonly());
 
                 NetworkAssetManager.Singleton.TryGetAsset(assetGlobalId, out var currentAsset);
@@ -75,10 +76,10 @@ namespace Unity.Netcode.Addons.Editor
             if (NetworkAssetManager.Singleton == null)
                 return true;
             if (NetworkManager.Singleton.IsHost)
-                return true;
+                return false;
             if (NetworkManager.Singleton.IsServer)
                 return false;
-            return NetworkManager.Singleton.IsClient;
+            return true;
         }
         private Type GetGenericType()
         {
