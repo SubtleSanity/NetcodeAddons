@@ -58,12 +58,13 @@ namespace Unity.Netcode.Addons.Editor
 
         private bool IsReadonly()
         {
+            // can write if app is not running
             if (Application.isPlaying == false)
-                return true;
-            if (NetworkManager.Singleton == null)
-                return true;
-            if (NetworkManager.Singleton.IsHost)
                 return false;
+            // can write if networkmanager doesn't exist
+            if (NetworkManager.Singleton == null)
+                return false;
+            // can write if we're the server
             if (NetworkManager.Singleton.IsServer)
                 return false;
             return true;

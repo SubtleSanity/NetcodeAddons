@@ -13,6 +13,9 @@ namespace Unity.Netcode.Addons.Editor
     [CustomEditor(typeof(NetworkAssetManager))]
     public class NetworkAssetManagerEditor : UnityEditor.Editor
     {
+        private const string buttonText = "Find and add all Manifests in Project";
+        private const string buttonTip = "Search the projects assets to find all NetworkAssetManifest scriptable objects and add them to the NetworkAssetManager.";
+
         public new NetworkAssetManager target
         {
             get
@@ -46,7 +49,7 @@ namespace Unity.Netcode.Addons.Editor
             manifestList.DoLayoutList();
 
             EditorGUILayout.Space(10);
-            if (GUILayout.Button("Find and add all Manifests in Assets"))
+            if (GUILayout.Button(new GUIContent(buttonText, buttonTip)))
             {
                 // clear the array
                 manifestList.serializedProperty.arraySize = 0;
