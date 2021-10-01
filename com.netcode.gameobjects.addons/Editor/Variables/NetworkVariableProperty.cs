@@ -76,35 +76,36 @@ namespace Unity.Netcode.Addons.Editor
         }
         private object GetValueDirectly(object netVar)
         {
-            foreach (var field in netVar.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic))
-                if (field.Name == "m_InternalValue")
-                {
-                    return field.GetValue(netVar);
-                }
-            throw new Exception("m_InternalValue is missing. Did NetworkVariable<> implementation change?");
+            var field = netVar.GetType().GetField("m_InternalValue", BindingFlags.Instance | BindingFlags.NonPublic);
+            
+            if (field == null)
+            {
+                throw new Exception("NetworkVariable<>.m_InternalValue is missing. Did NetworkVariable<> implementation change?");
+            }
+
+            return field.GetValue(netVar);
         }
         private void SetValueDirectly(object netVar, object value)
         {
-            foreach (var field in netVar.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic))
-                if (field.Name == "m_InternalValue")
-                {
-                    field.SetValue(netVar, value);
-                    return;
-                }
-            throw new Exception("m_InternalValue is missing. Did NetworkVariable<> implementation change?");
+            var field = netVar.GetType().GetField("m_InternalValue", BindingFlags.Instance | BindingFlags.NonPublic);
 
+            if (field == null)
+            {
+                throw new Exception("NetworkVariable<>.m_InternalValue is missing. Did NetworkVariable<> implementation change?");
+            }
+
+            field.SetValue(netVar, value);
         }
         private void SetValueByMethod(object netVar, object value)
         {
-            // var method = typeof(NetworkVariableProperty).GetMethod("ApplyChange", BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.NonPublic);
-            // method.Invoke(this, new[] { variable });
+            var field = netVar.GetType().GetProperty("Value", BindingFlags.Instance | BindingFlags.Public);
 
-            foreach (var field in netVar.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public))
-                if (field.Name == "Value")
-                {
-                    field.SetValue(netVar, value);
-                    return;
-                }
+            if (field == null)
+            {
+                throw new Exception("NetworkVariable<>.Value is missing. Did NetworkVariable<> implementation change?");
+            }
+
+            field.SetValue(netVar, value);
         }
     }
 }
