@@ -72,11 +72,12 @@ Use NetworkVariableAsset to keep an asset reference synced in a variable
 I've implemented a PropertyDrawer for NetworkVariable<> so NetworkVariables will show up in the inspector correctly.  
  - It handles making the variables readonly when the project is not running, is not connected or is running as a client (since only server can edit variables)  
  - It handles assigning values in the inspector correctly. The new value will be sent across the network exactly the same as if you had set the value on the NetworkVariable by code.
+ - It handles all types supported by NetworkVariable<>. Displays them in the same format as variables are normally displayed in inspector and will respect any custom property drawers those types have.
 
 There are also PropertyDrawer for the NetworkReferenceXXX types, so they display the reference in the inspector instead of the internal Id numbers that they actually contain and you can assign objects to them by dragging like normal. Unfortunately because they depend on the NetworkManager/NetworkAssetManager to look up their values you can't assign references to them when the game isn't running.  
 
 Unity didn't use property drawers for NetworkVariables and instead implemented a custom editor for NetworkBehaviour that uses reflection on the class to find all the NetworkVariables and manually draw them seperately to the rest of the class. I'm not quite sure what the benefit of doing it that way was but it creates a few issues:
- - It blocks NetworkVariables from being drawn the normal way, so we can't implement custom PropertyDrawers for them. 
+ - It stops NetworkVariables from being drawn the normal way, so we can't implement custom PropertyDrawers for any NetworkVariables or types used in NetworkVariables. 
  - It  means if a user were to implement a custom editor for a class that inherit NetworkBehaviour they would lose the ability to see NetworkVariables in the editor as their editor would overrule the unity one. 
  - Their approach also involves manually reflecting each type that could potentially be drawn, meaning that it's limited to only drawing known primitive types and won't support user defined structs etc.
 
