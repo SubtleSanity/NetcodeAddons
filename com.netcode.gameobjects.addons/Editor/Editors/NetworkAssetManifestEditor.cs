@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityObject = UnityEngine.Object;
+using System.Reflection;
 using Unity.Netcode;
 
 namespace Unity.Netcode.Addons.Editor
@@ -60,7 +61,7 @@ namespace Unity.Netcode.Addons.Editor
                         if (entryAsset.objectReferenceValue != null)
                         {
                             var globalObjectIdString = GlobalObjectId.GetGlobalObjectIdSlow(this).ToString();
-                            entryGlobalId.longValue = XXHash.Hash32(globalObjectIdString);
+                            entryGlobalId.longValue = GetHash32(globalObjectIdString);
                         }
                         else
                         {
@@ -105,7 +106,7 @@ namespace Unity.Netcode.Addons.Editor
                 if (EditorGUI.EndChangeCheck())
                 {
                     var globalObjectIdString = GlobalObjectId.GetGlobalObjectIdSlow(this).ToString();
-                    entryGlobalId.longValue = XXHash.Hash32(globalObjectIdString);
+                    entryGlobalId.longValue = GetHash32(globalObjectIdString);
                 }
             }
         }
@@ -124,6 +125,20 @@ namespace Unity.Netcode.Addons.Editor
         private void List_OnRemoveCallback(ReorderableList list)
         {
             list.serializedProperty.arraySize -= 1;
+        }
+
+        private uint GetHash32(string seed)
+        {
+            var assembly = typeof(NetworkObject).Assembly;
+            var hashType = assembly?.GetType("Unity.Netcode.XXHash");
+            var field = hashType?.GetMethod("Hash32", new Type[] { typeof(string) });
+           
+            if (field == null)
+            {
+                throw new Exception("Unity.Netcode.XXHash.Hash32() is missing. Did XXHash get refactored?");
+            }
+
+            return (uint)field.Invoke(null, new object[] { seed });
         }
     }
 }
