@@ -1,5 +1,5 @@
 ## What is it?  
-This adds some extra features on to Unitys Netcode for GameObjects  
+This is my personaal package for additions to the networking library. It adds some extra features on to Unitys Netcode for GameObjects. I'm still tweaking it and testing that everything works in all cases and it comes as "use at your own risk".  
 
 - Adds NetworkReferenceXXX types to handle sending references over the network  
     - NetworkReferenceObject
