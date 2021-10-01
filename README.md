@@ -2,8 +2,16 @@
 This adds some extra features on to Unitys Netcode for GameObjects  
 
 - Adds NetworkReferenceXXX types to handle sending references over the network  
+    - NetworkReferenceObject
+    - NetworkReferenceBehaviour
+    - NetworkReferenceAsset
 - Adds NetworkVariableXXX types to simplify using NetworkReferenceXXX types in networked variables  
-- Adds system for sending references to assets over the network (i.e: ScriptableObjects)  
+    - NetworkVariableObject
+    - NetworkVariableBehaviour
+    - NetworkVariableAsset
+- Adds system for sending references to assets over the network (i.e: ScriptableObjects)
+    - NetworkAssetManager
+    - NetworkAssetManifest  
 - Adds Property Drawer for NetworkVariable<> that properly supports updating the NetworkVariable when value is changed in inspector  
 - Adds Property Drawers for the NetworkReferenceXXX types to allow references to be assigned in inspector with proper typing  
 
