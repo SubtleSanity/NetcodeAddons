@@ -3,12 +3,12 @@ This is my personaal package for additions to the networking library. It adds so
 
 - Adds NetworkReferenceXXX types to handle sending references over the network  
     - NetworkReferenceObject
-    - NetworkReferenceBehaviour
-    - NetworkReferenceAsset
+    - NetworkReferenceBehaviour<>
+    - NetworkReferenceAsset<>
 - Adds NetworkVariableXXX types to simplify using NetworkReferenceXXX types in networked variables  
     - NetworkVariableObject
-    - NetworkVariableBehaviour
-    - NetworkVariableAsset
+    - NetworkVariableBehaviour<>
+    - NetworkVariableAsset<>
 - Adds system for sending references to assets over the network (i.e: ScriptableObjects)
     - NetworkAssetManager
     - NetworkAssetManifest  
