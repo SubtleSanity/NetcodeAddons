@@ -99,7 +99,6 @@ namespace Unity.Netcode.Addons.Editor
         {
             list.serializedProperty.arraySize -= 1;
         }
-
         private T[] GetAllInstances<T>() where T : ScriptableObject
         {
             string[] guids = AssetDatabase.FindAssets("t:" + typeof(T).Name);  //FindAssets uses tags check documentation for more info

@@ -34,22 +34,28 @@ namespace Unity.Netcode.Addons.Editor
             // detect and process any changes
             if (EditorGUI.EndChangeCheck())
             {
-                // apply the changes so we can read the new value
-                // can't support undo because it won't notify the NetVar of the change
-                property.serializedObject.ApplyModifiedPropertiesWithoutUndo();
-                // hold the new value the user just provided
-                var newValue = GetValueDirectly(variableObject);
-                // restore the old value so we can call Set() on the networkvariable
-                // otherwise it will think the new value doesn't represent a change
-                SetValueDirectly(variableObject, currentValue);
-                // call the proper function to set the new value
-                SetValueByMethod(variableObject, newValue);
+                if (Application.isPlaying)
+                {
+                    // apply the changes so we can read the new value
+                    property.serializedObject.ApplyModifiedPropertiesWithoutUndo();
+                    // hold the new value the user just provided
+                    var newValue = GetValueDirectly(variableObject);
+                    // restore the old value so we can call Set() on the networkvariable
+                    // otherwise it will think the new value doesn't represent a change
+                    SetValueDirectly(variableObject, currentValue);
+                    // call the proper function to set the new value
+                    SetValueByMethod(variableObject, newValue);
+                }
+                else
+                {
+                    // apply the change
+                    property.serializedObject.ApplyModifiedProperties();
+                }
             }
 
             EditorGUI.EndDisabledGroup();
             EditorGUI.EndProperty();
         }
-
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             var internalProperty = property.FindPropertyRelative("m_InternalValue");
