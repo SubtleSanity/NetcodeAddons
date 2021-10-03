@@ -13,7 +13,7 @@ using UnityObject = UnityEngine.Object;
 namespace Unity.Netcode.Addons.Editor
 {
     [CustomPropertyDrawer(typeof(NetworkReferenceBehaviour<>), true)]
-    public class NetworkVariableBehaviourProperty : PropertyDrawer
+    public class NetworkReferenceBehaviourProperty : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {

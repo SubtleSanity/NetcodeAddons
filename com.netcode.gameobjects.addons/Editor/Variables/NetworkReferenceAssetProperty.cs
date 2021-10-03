@@ -12,34 +12,36 @@ using UnityObject = UnityEngine.Object;
 
 namespace Unity.Netcode.Addons.Editor
 {
-    [CustomPropertyDrawer(typeof(NetworkReferenceObject), true)]
-    public class NetworkVariableObjectProperty : PropertyDrawer
+    [CustomPropertyDrawer(typeof(NetworkReferenceAsset<>), true)]
+    public class NetworkReferenceAssetProperty : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             EditorGUI.BeginProperty(position, label, property);
 
-            var objectProperty = property.FindPropertyRelative("networkObjectId");
-            var objectGlobalId = (ulong)objectProperty.longValue;
+            var assetProperty = property.FindPropertyRelative("assetGlobalId");
+            var assetGlobalId = (uint)assetProperty.intValue;
             var contentPosition = EditorGUI.PrefixLabel(position, label);
+            var genericType = GetGenericType();
 
             if (SafeToRead())
             {
+                using var disabled = new EditorGUI.DisabledScope(IsReadonly());
                 EditorGUI.BeginDisabledGroup(IsReadonly());
 
-                var currentObject = GetObject(objectGlobalId);
-                var newObject = EditorGUI.ObjectField(contentPosition, GUIContent.none, currentObject, typeof(NetworkObject), true) as NetworkObject;
+                NetworkAssetManager.Singleton.TryGetAsset(assetGlobalId, out var currentAsset);
+                var newAsset = EditorGUI.ObjectField(contentPosition, GUIContent.none, currentAsset, genericType, true);
 
-                if (currentObject != newObject)
-                    if (newObject != null)
+                if (currentAsset != newAsset)
+                    if (newAsset != null)
                     {
-                        objectGlobalId = newObject.NetworkObjectId;
-                        objectProperty.longValue = (long)objectGlobalId;
+                        assetGlobalId = NetworkAssetManager.Singleton.GetGlobalId(newAsset);
+                        assetProperty.intValue = (int)assetGlobalId;
                     }
                     else
                     {
-                        objectGlobalId = default;
-                        objectProperty.longValue = (long)objectGlobalId;
+                        assetGlobalId = default;
+                        assetProperty.intValue = (int)assetGlobalId;
                     }
 
                 EditorGUI.EndDisabledGroup();
@@ -49,11 +51,11 @@ namespace Unity.Netcode.Addons.Editor
             {
                 EditorGUI.BeginDisabledGroup(true);
 
-                EditorGUI.ObjectField(contentPosition, GUIContent.none, null, typeof(NetworkObject), true);
+                EditorGUI.ObjectField(contentPosition, GUIContent.none, null, genericType, true);
 
                 EditorGUI.EndDisabledGroup();
                 EditorGUI.EndProperty();
-            }
+            }           
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
@@ -63,17 +65,11 @@ namespace Unity.Netcode.Addons.Editor
 
         private bool SafeToRead()
         {
-            // we can't read when the game isn't running
-            // we can't read when the networkmanager isn't present
-            // we can't read when network isn't started
-
             if (Application.isPlaying == false)
                 return false;
             if (NetworkManager.Singleton == null)
                 return false;
-            if (NetworkManager.Singleton.IsClient == false &&
-                NetworkManager.Singleton.IsServer == false &&
-                NetworkManager.Singleton.IsHost == false)
+            if (NetworkAssetManager.Singleton == null)
                 return false;
             return true;
         }
@@ -83,19 +79,17 @@ namespace Unity.Netcode.Addons.Editor
                 return true;
             if (NetworkManager.Singleton == null)
                 return true;
+            if (NetworkAssetManager.Singleton == null)
+                return true;
             if (NetworkManager.Singleton.IsHost)
                 return false;
             if (NetworkManager.Singleton.IsServer)
                 return false;
             return true;
         }
-        private NetworkObject GetObject(ulong networkObjectId)
+        private Type GetGenericType()
         {
-            NetworkManager.Singleton.SpawnManager.SpawnedObjects
-                .TryGetValue(networkObjectId, out NetworkObject networkObject);
-
-            return networkObject;
+            return fieldInfo.FieldType.GetGenericArguments()[0];
         }
-
     }
 }

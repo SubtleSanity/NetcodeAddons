@@ -13,6 +13,7 @@ using Unity.Netcode;
 namespace Unity.Netcode.Addons.Editor
 {
     [CustomPropertyDrawer(typeof(NetworkVariable<>), true)]
+    [CustomPropertyDrawer(typeof(NetworkVariableString), true)]
     public class NetworkVariableProperty : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -120,14 +121,14 @@ namespace Unity.Netcode.Addons.Editor
         }
         protected void SetValueByMethod(object networkVariable, object value)
         {
-            var field = networkVariable.GetType().GetProperty("Value", BindingFlags.Instance | BindingFlags.Public);
+            var method = networkVariable.GetType().GetMethod("Set", BindingFlags.Instance | BindingFlags.NonPublic);
 
-            if (field == null)
+            if (method == null)
             {
-                throw new Exception("NetworkVariable<>.Value is missing. Did NetworkVariable<> implementation change?");
+                throw new Exception("NetworkVariable<>.Set is missing. Did NetworkVariable<> implementation change?");
             }
 
-            field.SetValue(networkVariable, value);
+            method.Invoke(networkVariable, new object[] { value });
         }
     }
 }
