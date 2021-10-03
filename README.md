@@ -18,6 +18,7 @@ This is my personal package for additions to the networking library. It adds som
     - RangeNetworkVariableAttribute
     - MinNetworkVariableAttribute
     - MaxNetworkVariableAttribute
+    - ColourUsageNetworkVariableAttribute
 
 ## How do I use it?
 
@@ -102,3 +103,7 @@ MinNetworkVariableAttribute is the equivalent for minAttribute
 
 MaxNetworkVariableAttribute is the equivalent for maxAttribute
 - max: highest value to allow
+
+ColourUsageVariableAttribute is the equivalent for ColorUsage
+- showAlpha
+- hdr
