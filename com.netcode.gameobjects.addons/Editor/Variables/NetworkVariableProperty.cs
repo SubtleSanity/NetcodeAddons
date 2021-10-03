@@ -25,12 +25,13 @@ namespace Unity.Netcode.Addons.Editor
             // get the information we need from the property
             var internalProperty = property.FindPropertyRelative("m_InternalValue");
             var variableObject = GetNetworkVariable(property);
-            var currentValue = GetValueDirectly(variableObject);            
+            var currentValue = GetValueDirectly(variableObject);
 
             // show the property field
             EditorGUI.BeginChangeCheck();
-            EditorGUI.PropertyField(position, internalProperty, label, true);
-            
+
+            DrawProperty(position, property, internalProperty, label);
+
             // detect and process any changes
             if (EditorGUI.EndChangeCheck())
             {
@@ -59,10 +60,10 @@ namespace Unity.Netcode.Addons.Editor
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             var internalProperty = property.FindPropertyRelative("m_InternalValue");
-            return EditorGUI.GetPropertyHeight(internalProperty);
+            return GetHeight(property, internalProperty, label);
         }
 
-        private bool IsReadonly()
+        protected virtual bool IsReadonly()
         {
             // can write if app is not running
             if (Application.isPlaying == false)
@@ -75,6 +76,15 @@ namespace Unity.Netcode.Addons.Editor
                 return false;
             return true;
         }
+        protected virtual void DrawProperty(Rect position, SerializedProperty property, SerializedProperty internalProperty, GUIContent label)
+        {
+            EditorGUI.PropertyField(position, internalProperty, label, true);
+        }
+        protected virtual float GetHeight(SerializedProperty property, SerializedProperty internalProperty, GUIContent label)
+        {
+            return EditorGUI.GetPropertyHeight(internalProperty);
+
+        }
 
         // reflected access to NetworkVariable<>
         private object GetNetworkVariable(SerializedProperty property)
@@ -84,7 +94,7 @@ namespace Unity.Netcode.Addons.Editor
         private object GetValueDirectly(object netVar)
         {
             var field = netVar.GetType().GetField("m_InternalValue", BindingFlags.Instance | BindingFlags.NonPublic);
-            
+
             if (field == null)
             {
                 throw new Exception("NetworkVariable<>.m_InternalValue is missing. Did NetworkVariable<> implementation change?");
