@@ -12,8 +12,8 @@ namespace Assets.Code
     class TestBehaviour : NetworkBehaviour
     {
 
-        [RangeNetworkVariable(10, 100, slider:false)]
-        public NetworkVariable<Vector3> aa = new NetworkVariable<Vector3>();
+        [ColourUsageNetworkVariable(true, true)]
+        public NetworkVariable<Color> aa = new NetworkVariable<Color>();
 
     }
 }
