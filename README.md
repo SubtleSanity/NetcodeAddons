@@ -1,5 +1,5 @@
 ## What is it?  
-This is my personaal package for additions to the networking library. It adds some extra features on to Unitys Netcode for GameObjects. I'm still tweaking it and testing that everything works in all cases and it comes as "use at your own risk".  
+This is my personal package for additions to the networking library. It adds some extra features on to Unitys Netcode for GameObjects. I'm still tweaking it and testing that everything works in all cases and it comes as "use at your own risk".  
 
 - Adds NetworkReferenceXXX types to handle sending references over the network  
     - NetworkReferenceObject
@@ -14,6 +14,10 @@ This is my personaal package for additions to the networking library. It adds so
     - NetworkAssetManifest  
 - Adds Property Drawer for NetworkVariable<> that properly supports updating the NetworkVariable when value is changed in inspector  
 - Adds Property Drawers for the NetworkReferenceXXX types to allow references to be assigned in inspector with proper typing  
+- Adds NetworkVariable Equivalents for field attributes
+    - RangeNetworkVariableAttribute
+    - MinNetworkVariableAttribute
+    - MaxNetworkVariableAttribute
 
 ## How do I use it?
 
@@ -78,7 +82,23 @@ There are also PropertyDrawer for the NetworkReferenceXXX types, so they display
 
 Unity didn't use property drawers for NetworkVariables and instead implemented a custom editor for NetworkBehaviour that uses reflection on the class to find all the NetworkVariables and manually draw them seperately to the rest of the class. I'm not quite sure what the benefit of doing it that way was but it creates a few issues:
  - It stops NetworkVariables from being drawn the normal way, so we can't implement custom PropertyDrawers for any NetworkVariables or types used in NetworkVariables. 
+ - It prevents us from being able to implement attributes for NetworkVariables
  - It  means if a user were to implement a custom editor for a class that inherit NetworkBehaviour they would lose the ability to see NetworkVariables in the editor as their editor would overrule the unity one. 
  - Their approach also involves manually reflecting each type that could potentially be drawn, meaning that it's limited to only drawing known primitive types and won't support user defined structs etc.
 
-The new PropertyDrawer replaces the functionality of drawing NetworkVariables and addresses all of the above issues. To prevent the unity custom editor from applying and interfering i've added an empty editor for NetworkBehaviour to overrule it and just draw the standard editor.  
+The new PropertyDrawer replaces the functionality of drawing NetworkVariables and solves the above issues. To prevent the unity custom editor from applying and interfering i've added an empty editor for NetworkBehaviour to overrule it and just draw the standard editor.  
+
+## NetworkVariable attributes
+
+I've added attributes to match some of the basic attributes that are normally available for use on fields.
+
+RangeNetworkVariableAttribute is the equivalent for RangeAttribute
+- min: lowest value to allow
+- max: heighest value to allow
+- slider: whether to show the range as a slider instead of a textbox (defaults to true)    
+
+MinNetworkVariableAttribute is the equivalent for minAttribute
+- min: lowest value to allow
+
+MaxNetworkVariableAttribute is the equivalent for maxAttribute
+- max: highest value to allow
