@@ -1,5 +1,5 @@
 ## What is it?  
-This is my personaal package for additions to the networking library. It adds some extra features on to Unitys Netcode for GameObjects. I'm still tweaking it and testing that everything works in all cases and it comes as "use at your own risk".  
+This is my personal package for additions to the networking library. It adds some extra features on to Unitys Netcode for GameObjects. I'm still tweaking it and testing that everything works in all cases and it comes as "use at your own risk".  
 
 - Adds NetworkReferenceXXX types to handle sending references over the network  
     - NetworkReferenceObject
@@ -14,6 +14,10 @@ This is my personaal package for additions to the networking library. It adds so
     - NetworkAssetManifest  
 - Adds Property Drawer for NetworkVariable<> that properly supports updating the NetworkVariable when value is changed in inspector  
 - Adds Property Drawers for the NetworkReferenceXXX types to allow references to be assigned in inspector with proper typing  
+- Adds NetworkVariable Equivalents for field attributes
+    - RangeNetworkVariableAttribute
+    - MinNetworkVariableAttribute
+    - MaxNetworkVariableAttribute
 
 ## How do I use it?
 
@@ -82,3 +86,18 @@ Unity didn't use property drawers for NetworkVariables and instead implemented a
  - Their approach also involves manually reflecting each type that could potentially be drawn, meaning that it's limited to only drawing known primitive types and won't support user defined structs etc.
 
 The new PropertyDrawer replaces the functionality of drawing NetworkVariables and addresses all of the above issues. To prevent the unity custom editor from applying and interfering i've added an empty editor for NetworkBehaviour to overrule it and just draw the standard editor.  
+
+## NetworkVariable attributes
+
+I've added attributes to match some of the basic attributes that are normally available for use on fields.
+
+RangeNetworkVariableAttribute is the equivalent for RangeAttribute  
+- min: lowest value to allow
+- max: heighest value to allow
+- slider: whether to show the range as a slider instead of a textbox (defaults to true)    
+- 
+MinNetworkVariableAttribute is the equivalent for minAttribute
+- min: lowest value to allow
+
+MaxNetworkVariableAttribute is the equivalent for maxAttribute    
+- max: highest value to allow
