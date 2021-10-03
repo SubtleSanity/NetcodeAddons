@@ -95,7 +95,7 @@ RangeNetworkVariableAttribute is the equivalent for RangeAttribute
 - min: lowest value to allow
 - max: heighest value to allow
 - slider: whether to show the range as a slider instead of a textbox (defaults to true)    
-- 
+
 MinNetworkVariableAttribute is the equivalent for minAttribute
 - min: lowest value to allow
 
