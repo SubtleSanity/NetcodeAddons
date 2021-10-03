@@ -9,16 +9,11 @@ using Unity.Netcode.Addons;
 
 namespace Assets.Code
 {
-    
-
     class TestBehaviour : NetworkBehaviour
     {
 
-        public NetworkVariable<int> aa;
-        public NetworkVariable<int> a;
-
-        [RangeNetworkVariable(0f, 100f)]
-        public NetworkVariable<bool> bbb = new NetworkVariable<bool>();
+        [RangeNetworkVariable(10, 100, slider:false)]
+        public NetworkVariable<Vector3> aa = new NetworkVariable<Vector3>();
 
     }
 }

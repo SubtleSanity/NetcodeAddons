@@ -30,11 +30,13 @@ namespace Unity.Netcode.Addons.Editor
             // show the property field
             EditorGUI.BeginChangeCheck();
 
-            DrawProperty(position, property, internalProperty, label);
+            DrawInternalProperty(position, property, internalProperty, label);
 
             // detect and process any changes
             if (EditorGUI.EndChangeCheck())
             {
+                OnPropertyChanged(position, property, internalProperty, label);
+
                 if (Application.isPlaying)
                 {
                     // apply the changes so we can read the new value
@@ -60,7 +62,7 @@ namespace Unity.Netcode.Addons.Editor
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             var internalProperty = property.FindPropertyRelative("m_InternalValue");
-            return GetHeight(property, internalProperty, label);
+            return GetInternalPropertyHeight(property, internalProperty, label);
         }
 
         protected virtual bool IsReadonly()
@@ -76,53 +78,56 @@ namespace Unity.Netcode.Addons.Editor
                 return false;
             return true;
         }
-        protected virtual void DrawProperty(Rect position, SerializedProperty property, SerializedProperty internalProperty, GUIContent label)
+        protected virtual void DrawInternalProperty(Rect position, SerializedProperty property, SerializedProperty internalProperty, GUIContent label)
         {
             EditorGUI.PropertyField(position, internalProperty, label, true);
         }
-        protected virtual float GetHeight(SerializedProperty property, SerializedProperty internalProperty, GUIContent label)
+        protected virtual void OnPropertyChanged(Rect position, SerializedProperty property, SerializedProperty internalProperty, GUIContent label)
         {
-            return EditorGUI.GetPropertyHeight(internalProperty);
 
         }
+        protected virtual float GetInternalPropertyHeight(SerializedProperty property, SerializedProperty internalProperty, GUIContent label)
+        {
+            return EditorGUI.GetPropertyHeight(internalProperty);
+        }
 
-        // reflected access to NetworkVariable<>
-        private object GetNetworkVariable(SerializedProperty property)
+        // reflected access to NetworkVariable<> and its internal value
+        protected object GetNetworkVariable(SerializedProperty property)
         {
             return fieldInfo.GetValue(property.serializedObject.targetObject);
         }
-        private object GetValueDirectly(object netVar)
+        protected object GetValueDirectly(object networkVariable)
         {
-            var field = netVar.GetType().GetField("m_InternalValue", BindingFlags.Instance | BindingFlags.NonPublic);
+            var field = networkVariable.GetType().GetField("m_InternalValue", BindingFlags.Instance | BindingFlags.NonPublic);
 
             if (field == null)
             {
                 throw new Exception("NetworkVariable<>.m_InternalValue is missing. Did NetworkVariable<> implementation change?");
             }
 
-            return field.GetValue(netVar);
+            return field.GetValue(networkVariable);
         }
-        private void SetValueDirectly(object netVar, object value)
+        protected void SetValueDirectly(object networkVariable, object value)
         {
-            var field = netVar.GetType().GetField("m_InternalValue", BindingFlags.Instance | BindingFlags.NonPublic);
+            var field = networkVariable.GetType().GetField("m_InternalValue", BindingFlags.Instance | BindingFlags.NonPublic);
 
             if (field == null)
             {
                 throw new Exception("NetworkVariable<>.m_InternalValue is missing. Did NetworkVariable<> implementation change?");
             }
 
-            field.SetValue(netVar, value);
+            field.SetValue(networkVariable, value);
         }
-        private void SetValueByMethod(object netVar, object value)
+        protected void SetValueByMethod(object networkVariable, object value)
         {
-            var field = netVar.GetType().GetProperty("Value", BindingFlags.Instance | BindingFlags.Public);
+            var field = networkVariable.GetType().GetProperty("Value", BindingFlags.Instance | BindingFlags.Public);
 
             if (field == null)
             {
                 throw new Exception("NetworkVariable<>.Value is missing. Did NetworkVariable<> implementation change?");
             }
 
-            field.SetValue(netVar, value);
+            field.SetValue(networkVariable, value);
         }
     }
 }
