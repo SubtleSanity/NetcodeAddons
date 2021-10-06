@@ -9,6 +9,9 @@ This is my personal package for additions to the networking library. It adds som
     - NetworkVariableObject
     - NetworkVariableBehaviour<>
     - NetworkVariableAsset<>
+- Adds types for sending strings in RPCs and in NetworkVars
+    - NetworkString
+    - NetworkVariableString
 - Adds system for sending references to assets over the network (i.e: ScriptableObjects)
     - NetworkAssetManager
     - NetworkAssetManifest  
