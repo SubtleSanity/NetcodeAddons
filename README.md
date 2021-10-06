@@ -3,12 +3,12 @@ This is my personal package for additions to the networking library. It adds som
 
 - Adds NetworkReferenceXXX types to handle sending references over the network in RPCs
     - NetworkReferenceObject
-    - NetworkReferenceBehaviour<>
+    - NetworkReferenceComponent<>
     - NetworkReferenceAsset<>
     - NetworkString
 - Adds NetworkVariableXXX types to use the NetworkReferenceXXX types in NetworkVariables 
     - NetworkVariableObject
-    - NetworkVariableBehaviour<>
+    - NetworkVariableComponent<>
     - NetworkVariableAsset<>
     - NetworkVariableString
 - Adds system for linking up references to assets over the network (i.e: ScriptableObjects)
@@ -45,8 +45,8 @@ Modify Unity.Netcode
 ## NetworkReferenceXXX types
 
 - NetworkReferenceObject for NetworkObject
-- NetworkReferenceBehaviour<> for NetworkBehaviour
-- NetworkReferenceAsset<> for assets (anything inheriting UnityEngine.Object, including ScriptableObject)
+- NetworkReferenceComponent<> for types inheriting NetworkBehaviour
+- NetworkReferenceAsset<> for assets (any asset that inherits UnityEngine.Object, including ScriptableObject, Materials, etc)
 - NetworkString for strings
 
 These are structs that store a reference to an object.
@@ -55,8 +55,8 @@ When sent over the network they serialize to the appropriate Id numbers for the 
 You can use them as parameters in RPCs to send references in RPCs
 You can use them as variables using the NetworkVariableXXX types
 - NetworkVariableObject
-- NetworkVariableBehaviour
-- NetworkVariableAsset
+- NetworkVariableComponent<>
+- NetworkVariableAsset<>
 - NetworkVariableString
 
 ## Referencing assets across the network
@@ -88,25 +88,25 @@ Unity didn't use property drawers for NetworkVariables and instead implemented a
  - It stops NetworkVariables from being drawn the normal way, so we can't implement custom PropertyDrawers for any NetworkVariables or types used in NetworkVariables. 
  - It prevents us from being able to implement attributes for NetworkVariables
  - It  means if a user were to implement a custom editor for a class that inherit NetworkBehaviour they would lose the ability to see NetworkVariables in the editor as their editor would overrule the unity one. 
- - Their approach also involves manually reflecting each type that could potentially be drawn, meaning that it's limited to only drawing known primitive types and won't support user defined structs etc.
+ - Their approach also involves manually reflecting each type that could potentially be drawn, meaning that it's limited to only drawing primitive types that were known to the original programmer and won't support user defined structs etc.
 
-The new PropertyDrawer replaces the functionality of drawing NetworkVariables and solves the above issues. To prevent the unity custom editor from applying and interfering i've added an empty editor for NetworkBehaviour to overrule it and just draw the standard editor.  
+The new PropertyDrawer replaces the functionality of drawing NetworkVariables and addresses the above issues. To prevent the unity custom editor from applying and interfering i've added an empty editor for NetworkBehaviour to overrule it and just draw the standard editor.  
 
 ## NetworkVariable attributes
 
 I've added attributes to match some of the basic attributes that are normally available for use on fields.
 
-RangeNetworkVariableAttribute is the equivalent for RangeAttribute
+RangeNetworkAttribute is the equivalent for RangeAttribute
 - min: lowest value to allow
 - max: heighest value to allow
 - slider: whether to show the range as a slider instead of a textbox (defaults to true)    
 
-MinNetworkVariableAttribute is the equivalent for minAttribute
+MinNetworkAttribute is the equivalent for minAttribute
 - min: lowest value to allow
 
-MaxNetworkVariableAttribute is the equivalent for maxAttribute
+MaxNetworkAttribute is the equivalent for maxAttribute
 - max: highest value to allow
 
-ColourUsageVariableAttribute is the equivalent for ColorUsage
+ColourUsageAttribute is the equivalent for ColorUsage
 - showAlpha
 - hdr
