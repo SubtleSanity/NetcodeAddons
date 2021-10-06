@@ -1,27 +1,28 @@
 ## What is it?  
 This is my personal package for additions to the networking library. It adds some extra features on to Unitys Netcode for GameObjects. I'm still tweaking it and testing that everything works in all cases and it comes as "use at your own risk".  
 
-- Adds NetworkReferenceXXX types to handle sending references over the network  
+- Adds NetworkReferenceXXX types to handle sending references over the network in RPCs
     - NetworkReferenceObject
     - NetworkReferenceBehaviour<>
     - NetworkReferenceAsset<>
-- Adds NetworkVariableXXX types to simplify using NetworkReferenceXXX types in networked variables  
+    - NetworkString
+- Adds NetworkVariableXXX types to use the NetworkReferenceXXX types in NetworkVariables 
     - NetworkVariableObject
     - NetworkVariableBehaviour<>
     - NetworkVariableAsset<>
-- Adds types for sending strings in RPCs and in NetworkVars
-    - NetworkString
     - NetworkVariableString
-- Adds system for sending references to assets over the network (i.e: ScriptableObjects)
+- Adds system for linking up references to assets over the network (i.e: ScriptableObjects)
     - NetworkAssetManager
     - NetworkAssetManifest  
-- Adds Property Drawer for NetworkVariable<> that properly supports updating the NetworkVariable when value is changed in inspector  
-- Adds Property Drawers for the NetworkReferenceXXX types to allow references to be assigned in inspector with proper typing  
-- Adds NetworkVariable Equivalents for field attributes
-    - RangeNetworkVariableAttribute
-    - MinNetworkVariableAttribute
-    - MaxNetworkVariableAttribute
-    - ColourUsageNetworkVariableAttribute
+- Adds Property Drawer for NetworkVariable<> 
+    - Supports updating the value across the network when changed at runtime
+    - Handles all the above referenceVariableXXX types to allow assigning references in inspector
+    - Handles all types usable with NetworkVariable<> including custom struct types
+- Adds NetworkVariable<> Equivalents for some unity field attributes
+    - RangeNetworkAttribute
+    - MinNetworkAttribute
+    - MaxNetworkAttribute
+    - ColourUsageNetworkAttribute
 
 ## How do I use it?
 
@@ -46,34 +47,33 @@ Modify Unity.Netcode
 - NetworkReferenceObject for NetworkObject
 - NetworkReferenceBehaviour<> for NetworkBehaviour
 - NetworkReferenceAsset<> for assets (anything inheriting UnityEngine.Object, including ScriptableObject)
+- NetworkString for strings
 
-These work by storing the global network id number for the object/component/asset  
-The client can then look up the local copy of the object.  
+These are structs that store a reference to an object.
+When sent over the network they serialize to the appropriate Id numbers for the object that can be restored at the other end
 
-To get the reference to the object you call Get() or TryGet()  
-If the object doesn't exist it will return null.  
-
-You can use these as parameters in RPCs  
-You can use these in NetworkVariable<>  
-Use in NetworkVariable<> can be simplified by using the NetworkVariableXXX types:  
+You can use them as parameters in RPCs to send references in RPCs
+You can use them as variables using the NetworkVariableXXX types
 - NetworkVariableObject
 - NetworkVariableBehaviour
 - NetworkVariableAsset
+- NetworkVariableString
 
 ## Referencing assets across the network
-This system will allow you to send references to assets in RPCs and NetworkVariables. Useful for sending a reference to a scriptable object but can be used for any asset that inherits from UnityEngine.Object, including meshes, materials, etc. It works by creating a registry of assets with id numbers. The server can simply send the id number to a client and the client will look up the local copy of the asset.
+This system will allow you to send references to assets across the network. Useful for sending a reference to a scriptable object but can be used for any asset that inherits from UnityEngine.Object including meshes, materials, etc.  
+It works by creating a list of known assets with id numbers. The server can simply send the id number to a client and the client will look up the local copy of the asset.
 
-To set up the register of assets:  
+To set up the list of assets:  
 &emsp; Add a NetworkAssetManager component to your NetworkManager gameobject  
-&emsp; Create a NetworkAssetManifest by right clicking in the project explorer and selecting Netcode/Network Asset Manifest  
-&emsp; Add the NetworkAssetManifest to the NetworkAssetManager  
+&emsp; Create a NetworkAssetManifest by right clicking in the project explorer and selecting Create/Netcode/Network Asset Manifest  
+&emsp; Add the NetworkAssetManifest to the NetworkAssetManager component you created  
 &emsp; Add any assets you want to reference to the NetworkAssetManifest  
 
 Assets are added using ScriptableObjects instead of adding them directly to the manager  
-This allows for proper organisation of networked assets instead of one monolithic list on a scene component  
+This allows for proper organisation of networked assets instead of having one monolithic list on a scene component. 
 
 Use NetworkReferenceAsset<> to send an asset reference in an RPC    
-Use NetworkVariableAsset to keep an asset reference synced in a variable
+Use NetworkVariableAsset<> to keep an asset reference synced in a variable
 
 ## Custom property drawers
 
