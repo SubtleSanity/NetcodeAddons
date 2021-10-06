@@ -13,16 +13,16 @@ using Unity.Netcode;
 namespace Unity.Netcode.Addons
 {
     [AttributeUsage(AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
-    public sealed class ColourUsageNetworkVariableAttribute : PropertyAttribute
+    public sealed class ColourUsageNetworkAttribute : PropertyAttribute
     {
         public readonly bool showAlpha = true;
         public readonly bool hdr = false;
 
-        public ColourUsageNetworkVariableAttribute(bool showAlpha)
+        public ColourUsageNetworkAttribute(bool showAlpha)
         {
             this.showAlpha = showAlpha;
         }
-        public ColourUsageNetworkVariableAttribute(bool showAlpha, bool hdr)
+        public ColourUsageNetworkAttribute(bool showAlpha, bool hdr)
         {
             this.showAlpha = showAlpha;
             this.hdr = hdr;

@@ -13,8 +13,8 @@ using Unity.Netcode;
 namespace Unity.Netcode.Addons.Editor
 {
     [CustomPropertyDrawer(typeof(NetworkVariable<>), true)]
-    [CustomPropertyDrawer(typeof(NetworkVariableString), true)]
-    public class NetworkVariableProperty : PropertyDrawer
+    [CustomPropertyDrawer(typeof(NetworkReferenceVariable<>), true)]
+    public class NetworkVariableDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -38,7 +38,7 @@ namespace Unity.Netcode.Addons.Editor
             {
                 OnPropertyChanged(position, property, internalProperty, label);
 
-                if (Application.isPlaying)
+                if (IsNetworkRunning())
                 {
                     // apply the changes so we can read the new value
                     property.serializedObject.ApplyModifiedPropertiesWithoutUndo();
@@ -68,17 +68,39 @@ namespace Unity.Netcode.Addons.Editor
 
         protected virtual bool IsReadonly()
         {
-            // can write if app is not running
+            // can edit if:
+            //  app is not running
+            //  network is not present/connected
+            //  we are the server
+
+            // can not edit if:
+            //  we are a client only
+
             if (Application.isPlaying == false)
                 return false;
-            // can write if networkmanager doesn't exist
             if (NetworkManager.Singleton == null)
                 return false;
-            // can write if we're the server
             if (NetworkManager.Singleton.IsServer)
                 return false;
-            return true;
+            if (NetworkManager.Singleton.IsClient)
+                return true;
+            return false;
         }
+        protected virtual bool IsNetworkRunning()
+        {
+            if (Application.isPlaying == false)
+                return false;
+            if (NetworkManager.Singleton == null)
+                return false;
+            if (NetworkManager.Singleton.IsHost)
+                return true;
+            if (NetworkManager.Singleton.IsServer)
+                return true;
+            if (NetworkManager.Singleton.IsClient)
+                return true;
+            return false;
+        }
+        
         protected virtual void DrawInternalProperty(Rect position, SerializedProperty property, SerializedProperty internalProperty, GUIContent label)
         {
             EditorGUI.PropertyField(position, internalProperty, label, true);
@@ -103,7 +125,7 @@ namespace Unity.Netcode.Addons.Editor
 
             if (field == null)
             {
-                throw new Exception("NetworkVariable<>.m_InternalValue is missing. Did NetworkVariable<> implementation change?");
+                throw new Exception(string.Format("{0}.m_internalValue is missing. Did {0} implementation change?", networkVariable.GetType().Name));
             }
 
             return field.GetValue(networkVariable);
@@ -114,21 +136,20 @@ namespace Unity.Netcode.Addons.Editor
 
             if (field == null)
             {
-                throw new Exception("NetworkVariable<>.m_InternalValue is missing. Did NetworkVariable<> implementation change?");
+                throw new Exception(string.Format("{0}.m_internalValue is missing. Did {0} implementation change?", networkVariable.GetType().Name));
             }
 
             field.SetValue(networkVariable, value);
         }
         protected void SetValueByMethod(object networkVariable, object value)
         {
-            var method = networkVariable.GetType().GetMethod("Set", BindingFlags.Instance | BindingFlags.NonPublic);
+            var property = networkVariable.GetType().GetProperty("Value", BindingFlags.Instance | BindingFlags.Public);
 
-            if (method == null)
+            if (property == null)
             {
-                throw new Exception("NetworkVariable<>.Set is missing. Did NetworkVariable<> implementation change?");
+                throw new Exception(string.Format("{0}.Value is missing. Did {0} implementation change?", networkVariable.GetType().Name));
             }
-
-            method.Invoke(networkVariable, new object[] { value });
+            property.SetValue(networkVariable, value);
         }
     }
 }

@@ -8,7 +8,7 @@ using UnityObject = UnityEngine.Object;
 namespace Unity.Netcode.Addons
 {
     [Serializable]
-    public class NetworkVariableObject : NetworkVariable<NetworkReferenceObject>
+    public class NetworkVariableObject : NetworkReferenceVariable<NetworkReferenceObject>
     {
 
     }

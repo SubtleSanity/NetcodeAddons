@@ -13,14 +13,18 @@ using Unity.Netcode;
 namespace Unity.Netcode.Addons
 {
     [AttributeUsage(AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
-    public sealed class MaxNetworkVariableAttribute : PropertyAttribute
+    public sealed class RangeNetworkAttribute : PropertyAttribute
     {
+        public readonly float min;
         public readonly float max;
+        public readonly bool slider;
 
         // Attribute used to make a float or int variable in a script be restricted to a specific range.
-        public MaxNetworkVariableAttribute(float max)
+        public RangeNetworkAttribute(float min, float max, bool slider = true)
         {
+            this.min = min;
             this.max = max;
+            this.slider = slider;
         }
     }
 }

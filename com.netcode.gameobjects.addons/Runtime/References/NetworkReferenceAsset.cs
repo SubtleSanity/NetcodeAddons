@@ -3,82 +3,120 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using UnityObject = UnityEngine.Object;
 using UnityEngine;
+using UnityObject = UnityEngine.Object;
 
 namespace Unity.Netcode.Addons
 {
     [Serializable]
-    public struct NetworkReferenceAsset<T> 
-        : INetworkSerializable, IEquatable<NetworkReferenceAsset<T>> 
+    public struct NetworkReferenceAsset<T> : INetworkSerializable, INetworkReference<NetworkReferenceAsset<T>>
         where T : UnityObject
     {
         [SerializeField]
-        private uint assetGlobalId;
+        private T internalValue;
 
-        public uint AssetGlobalId
+        public T Value
         {
             get
             {
-                return assetGlobalId;
+                return internalValue;
             }
         }
 
         public NetworkReferenceAsset(T asset)
         {
-            assetGlobalId = NetworkAssetManager.Singleton.GetGlobalId(asset);
-        }
-        public NetworkReferenceAsset(uint globalId)
-        {
-            this.assetGlobalId = globalId;
+            internalValue = asset;
         }
 
-        public T Get()
+        void INetworkSerializable.NetworkSerialize<T1>(BufferSerializer<T1> serializer)
         {
-            return NetworkAssetManager.Singleton.GetAsset<T>(assetGlobalId);
+            var assetGlobalId = default(uint);
+
+            if (serializer.IsWriter)
+            {
+                if (internalValue == null)
+                {
+                    assetGlobalId = uint.MaxValue;
+                }
+                else
+                {
+                    assetGlobalId = NetworkAssetManager.Singleton.GetGlobalId(internalValue);
+                }
+            }
+
+            serializer.SerializeValue(ref assetGlobalId);
+
+            if (serializer.IsReader)
+            {
+                if (assetGlobalId == uint.MaxValue)
+                {
+                    internalValue = null;
+                }
+                else
+                {
+                    internalValue = NetworkAssetManager.Singleton.GetAsset(assetGlobalId) as T;
+                }
+            }
         }
-        public bool TryGet(out T asset)
+        void INetworkReference<NetworkReferenceAsset<T>>.NetworkRead(FastBufferReader reader)
         {
-            return NetworkAssetManager.Singleton.TryGetAsset<T>(assetGlobalId, out asset);
+            reader.ReadValueSafe(out uint assetGlobalId);
+
+            if (assetGlobalId == uint.MaxValue)
+            {
+                internalValue = null;
+            }
+            else
+            { 
+                internalValue = NetworkAssetManager.Singleton.GetAsset(assetGlobalId) as T;
+            }
+        }
+        void INetworkReference<NetworkReferenceAsset<T>>.NetworkWrite(FastBufferWriter writer)
+        {
+            var assetGlobalId = NetworkAssetManager.Singleton.GetGlobalId(internalValue);
+ 
+            if (internalValue == null)
+            {
+                writer.WriteValueSafe(uint.MaxValue);
+            }
+            else
+            {
+                writer.WriteValueSafe(assetGlobalId);
+            }
+        }
+        bool IEquatable<NetworkReferenceAsset<T>>.Equals(NetworkReferenceAsset<T> other)
+        {
+            return internalValue == other.internalValue;
         }
 
         public static implicit operator T(NetworkReferenceAsset<T> reference)
         {
-            return reference.Get();
+            return reference.internalValue;
         }
         public static implicit operator NetworkReferenceAsset<T>(T asset)
         {
             return new NetworkReferenceAsset<T>
             {
-                assetGlobalId = NetworkAssetManager.Singleton.GetGlobalId(asset)
+                internalValue = asset
             };
-        }
-
-        void INetworkSerializable.NetworkSerialize<T1>(BufferSerializer<T1> serializer)
-        {
-            serializer.SerializeValue(ref assetGlobalId);
-        }
-        bool IEquatable<NetworkReferenceAsset<T>>.Equals(NetworkReferenceAsset<T> other)
-        {
-            return assetGlobalId == other.assetGlobalId;
         }
 
         public bool Equals(NetworkReferenceAsset<T> other)
         {
-            return assetGlobalId == other.assetGlobalId;
+            return internalValue == other.internalValue;
         }
         public override bool Equals(object obj)
         {
-            return obj is NetworkReferenceAsset<T> other && assetGlobalId == other.assetGlobalId;
+            return obj is NetworkReferenceAsset<T> other && internalValue == other.internalValue;
         }
         public override int GetHashCode()
         {
-            return assetGlobalId.GetHashCode();
+            return internalValue.GetHashCode();
         }
         public override string ToString()
         {
-            return string.Format("NetworkReferenceAsset: {0}", assetGlobalId);
+            return string.Format("NetworkReferenceComponent: {0}", internalValue.ToString());
         }
-    }
 
+    }
 }

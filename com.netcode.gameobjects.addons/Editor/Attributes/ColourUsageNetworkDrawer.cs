@@ -13,13 +13,13 @@ using Unity.Netcode;
 namespace Unity.Netcode.Addons.Editor
 {
 
-    [CustomPropertyDrawer(typeof(ColourUsageNetworkVariableAttribute), true)]
-    public class ColourUsageNetworkVariableProperty : NetworkVariableProperty
+    [CustomPropertyDrawer(typeof(ColourUsageNetworkAttribute), true)]
+    public class ColourUsageNetworkProperty : NetworkVariableDrawer
     {
 
         protected override void DrawInternalProperty(Rect position, SerializedProperty property, SerializedProperty internalProperty, GUIContent label)
         {
-            var colorUsageAttribute = (ColourUsageNetworkVariableAttribute)attribute;
+            var colorUsageAttribute = (ColourUsageNetworkAttribute)attribute;
 
             if (internalProperty.propertyType == SerializedPropertyType.Color)
             {

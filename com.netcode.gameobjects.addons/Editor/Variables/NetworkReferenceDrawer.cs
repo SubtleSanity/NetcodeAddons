@@ -12,33 +12,26 @@ using UnityObject = UnityEngine.Object;
 
 namespace Unity.Netcode.Addons.Editor
 {
+    [CustomPropertyDrawer(typeof(NetworkReferenceAsset<>), true)]
+    [CustomPropertyDrawer(typeof(NetworkReferenceComponent<>), true)]
+    [CustomPropertyDrawer(typeof(NetworkReferenceObject), true)]
     [CustomPropertyDrawer(typeof(NetworkString), true)]
-    public class NetworkStringProperty : PropertyDrawer
+    public class NetworkReferenceDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             EditorGUI.BeginProperty(position, label, property);
 
-            var valueProperty = property.FindPropertyRelative("value");
-            var currentValue = valueProperty.stringValue;
-            var contentPosition = EditorGUI.PrefixLabel(position, label);
-
-            EditorGUI.BeginChangeCheck();
-
-            var newValue = EditorGUI.DelayedTextField(contentPosition, GUIContent.none, currentValue);
-
-            if (EditorGUI.EndChangeCheck())
-            {
-                valueProperty.stringValue = newValue;
-            }
+            var internalProperty = property.FindPropertyRelative("internalValue");
+           
+            EditorGUI.PropertyField(position, internalProperty, label, true);
 
             EditorGUI.EndProperty();
         }
-
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            return EditorGUIUtility.singleLineHeight;
+            var internalProperty = property.FindPropertyRelative("internalValue");
+            return EditorGUI.GetPropertyHeight(internalProperty);
         }
-
     }
 }

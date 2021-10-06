@@ -8,78 +8,115 @@ using UnityEngine;
 namespace Unity.Netcode.Addons
 {
     [Serializable]
-    public struct NetworkReferenceObject
-        : INetworkSerializable, IEquatable<NetworkReferenceObject>
+    public struct NetworkReferenceObject : INetworkSerializable, INetworkReference<NetworkReferenceObject>
     {
         [SerializeField]
-        private ulong networkObjectId;
-
-        public ulong NetworkObjectId
+        private NetworkObject internalValue;
+        
+        public NetworkObject Value
         {
             get
             {
-                return networkObjectId;
+                return internalValue;
             }
         }
 
         public NetworkReferenceObject(NetworkObject networkObject)
         {
-            networkObjectId = networkObject.NetworkObjectId;
-        }
-        public NetworkReferenceObject(ulong networkObjectId)
-        {
-            this.networkObjectId = networkObjectId;
+            internalValue = networkObject;
         }
 
-        public NetworkObject Get()
+        void INetworkSerializable.NetworkSerialize<T1>(BufferSerializer<T1> serializer)
         {
-            NetworkManager.Singleton.SpawnManager.SpawnedObjects
-                .TryGetValue(networkObjectId, out NetworkObject networkObject);
+            var networkObjectId = default(ulong);
 
-            return networkObject;
+            if (serializer.IsWriter)
+            {
+                if (internalValue == null)
+                {
+                    networkObjectId = ulong.MaxValue;
+                }
+                else
+                {
+                    networkObjectId = internalValue.NetworkObjectId;
+                }
+            }
+
+            serializer.SerializeValue(ref networkObjectId);
+
+            if (serializer.IsReader)
+            {
+                if (networkObjectId == ulong.MaxValue)
+                {
+                    internalValue = null;
+                }
+                else
+                {
+                    // get the network object
+                    NetworkManager.Singleton.SpawnManager.SpawnedObjects
+                        .TryGetValue(networkObjectId, out internalValue);
+                }
+            }
         }
-        public bool TryGet(out NetworkObject networkObject)
+        void INetworkReference<NetworkReferenceObject>.NetworkRead(FastBufferReader reader)
         {
-            return NetworkManager.Singleton.SpawnManager.SpawnedObjects
-                .TryGetValue(networkObjectId, out networkObject);
+            reader.ReadValueSafe(out ulong networkObjectId);
+            
+            if (networkObjectId == ulong.MaxValue)
+            {
+                internalValue = null;
+            }
+            else
+            {
+                // get the network object
+                NetworkManager.Singleton.SpawnManager.SpawnedObjects
+                    .TryGetValue(networkObjectId, out internalValue);
+            }
+        }
+        void INetworkReference<NetworkReferenceObject>.NetworkWrite(FastBufferWriter writer)
+        {
+            if (internalValue == null)
+            {
+                writer.WriteValueSafe(ulong.MaxValue);
+            }
+            else
+            {
+                writer.WriteValueSafe(internalValue.NetworkObjectId);
+            }
+        }
+        bool IEquatable<NetworkReferenceObject>.Equals(NetworkReferenceObject other)
+        {
+            return internalValue == other.internalValue;
         }
 
         public static implicit operator NetworkObject(NetworkReferenceObject reference)
         {
-            return reference.Get();
+            return reference.internalValue;
         }
         public static implicit operator NetworkReferenceObject(NetworkObject networkObject)
         {
             return new NetworkReferenceObject
             {
-                networkObjectId = networkObject.NetworkObjectId
+                internalValue = networkObject
             };
-        }
-
-        void INetworkSerializable.NetworkSerialize<T1>(BufferSerializer<T1> serializer)
-        {
-            serializer.SerializeValue(ref networkObjectId);
-        }
-        bool IEquatable<NetworkReferenceObject>.Equals(NetworkReferenceObject other)
-        {
-            return networkObjectId == other.networkObjectId;
         }
 
         public bool Equals(NetworkReferenceObject other)
         {
-            return networkObjectId == other.networkObjectId;
+            return internalValue == other.internalValue;
         }
         public override bool Equals(object obj)
         {
-            return obj is NetworkReferenceObject other && networkObjectId == other.networkObjectId;
+            return obj is NetworkReferenceObject other && internalValue == other.internalValue;
         }
         public override int GetHashCode()
         {
-            return networkObjectId.GetHashCode();
+            return internalValue.GetHashCode();
         }
         public override string ToString()
         {
-            return string.Format("NetworkReferenceObject: {0}", networkObjectId);
+            return string.Format("NetworkReferenceObject: {0}", internalValue.ToString());
         }
+
     }
 }

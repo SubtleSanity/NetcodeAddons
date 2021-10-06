@@ -13,12 +13,12 @@ using Unity.Netcode;
 namespace Unity.Netcode.Addons.Editor
 {
   
-    [CustomPropertyDrawer(typeof(RangeNetworkVariableAttribute), true)]
-    public class RangeNetworkVariableProperty : NetworkVariableProperty
+    [CustomPropertyDrawer(typeof(RangeNetworkAttribute), true)]
+    public class RangeNetworkDrawer : NetworkVariableDrawer
     {
         protected override void DrawInternalProperty(Rect position, SerializedProperty property, SerializedProperty internalProperty, GUIContent label)
         {
-            var rangeAttribute = (RangeNetworkVariableAttribute)attribute;
+            var rangeAttribute = (RangeNetworkAttribute)attribute;
 
             if (rangeAttribute.slider)
             {
@@ -37,7 +37,7 @@ namespace Unity.Netcode.Addons.Editor
 
         protected override void OnPropertyChanged(Rect position, SerializedProperty property, SerializedProperty internalProperty, GUIContent label)
         {
-            var rangeAttribute = (RangeNetworkVariableAttribute)attribute;
+            var rangeAttribute = (RangeNetworkAttribute)attribute;
             if (internalProperty.propertyType == SerializedPropertyType.Float)
             {
                 var value = internalProperty.floatValue;

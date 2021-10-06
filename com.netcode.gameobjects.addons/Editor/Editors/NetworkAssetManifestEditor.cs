@@ -24,12 +24,9 @@ namespace Unity.Netcode.Addons.Editor
         }
 
         private ReorderableList manifestList;
-        private SerializedProperty overrideGlobalId;
 
         private void OnEnable()
         {
-            overrideGlobalId = serializedObject.FindProperty(nameof(NetworkAssetManifest.overrideGlobalId));
-
             manifestList = new ReorderableList(serializedObject,
                 serializedObject
                 .FindProperty(nameof(NetworkAssetManifest.assetEntries)),
@@ -46,30 +43,6 @@ namespace Unity.Netcode.Addons.Editor
         {
             base.OnInspectorGUI();
             serializedObject.Update();
-
-            EditorGUI.BeginChangeCheck();
-            EditorGUILayout.PropertyField(overrideGlobalId);
-
-            if (EditorGUI.EndChangeCheck())
-                if (overrideGlobalId.boolValue)
-                    for (int i = 0; i < manifestList.serializedProperty.arraySize; i += 1)
-                    {
-                        var entry = manifestList.serializedProperty.GetArrayElementAtIndex(i);
-                        var entryGlobalId = entry.FindPropertyRelative(nameof(NetworkAssetEntry.globalId));
-                        var entryAsset = entry.FindPropertyRelative(nameof(NetworkAssetEntry.asset));
-
-                        if (entryAsset.objectReferenceValue != null)
-                        {
-                            var globalObjectIdString = GlobalObjectId.GetGlobalObjectIdSlow(this).ToString();
-                            entryGlobalId.longValue = GetHash32(globalObjectIdString);
-                        }
-                        else
-                        {
-                            entryGlobalId.longValue = 0;
-                        }
-                    }
-
-            EditorGUILayout.Space();
 
             manifestList.DoLayoutList();
 
@@ -92,23 +65,16 @@ namespace Unity.Netcode.Addons.Editor
             var entryGlobalId = entry.FindPropertyRelative(nameof(NetworkAssetEntry.globalId));
             var entryAsset = entry.FindPropertyRelative(nameof(NetworkAssetEntry.asset));
 
-            if (overrideGlobalId.boolValue)
-            {
-                EditorGUI.PropertyField(new Rect(rect.x + 10, rect.y, rect.width - 105, EditorGUIUtility.singleLineHeight), entryAsset, GUIContent.none);
-                EditorGUI.PropertyField(new Rect(rect.x + (rect.width - 90), rect.y, 90, EditorGUIUtility.singleLineHeight), entryGlobalId, GUIContent.none);
-            }
-            else
-            {
-                EditorGUI.BeginChangeCheck();
+            EditorGUI.BeginChangeCheck();
 
-                EditorGUI.PropertyField(new Rect(rect.x + 10, rect.y, rect.width - 10, EditorGUIUtility.singleLineHeight), entryAsset, GUIContent.none);
-                
-                if (EditorGUI.EndChangeCheck())
-                {
-                    var globalObjectIdString = GlobalObjectId.GetGlobalObjectIdSlow(this).ToString();
-                    entryGlobalId.longValue = GetHash32(globalObjectIdString);
-                }
+            EditorGUI.PropertyField(new Rect(rect.x + 10, rect.y, rect.width - 10, EditorGUIUtility.singleLineHeight), entryAsset, GUIContent.none);
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                var globalObjectIdString = GlobalObjectId.GetGlobalObjectIdSlow(this).ToString();
+                entryGlobalId.longValue = GetHash32(globalObjectIdString);
             }
+
         }
         private void List_OnAddCallback(ReorderableList list)
         {
