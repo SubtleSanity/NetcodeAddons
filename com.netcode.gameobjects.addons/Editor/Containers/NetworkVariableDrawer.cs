@@ -151,5 +151,6 @@ namespace Unity.Netcode.Addons.Editor
             }
             property.SetValue(networkVariable, value);
         }
+
     }
 }

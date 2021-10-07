@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 426947239}
   - component: {fileID: 426947236}
   - component: {fileID: 426947237}
+  - component: {fileID: 426947240}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -227,6 +228,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a4aca3b222230f409f5bdd57a92868b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &426947240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 426947235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 517af3ad055122f4e8bc868b72bb330a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  initialManifests:
+  - {fileID: 0}
 --- !u!1 &653260035
 GameObject:
   m_ObjectHideFlags: 0
@@ -451,17 +466,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8843cb889e915724f85c1cd970246a2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  aaa:
-    m_InternalValue:
-      internalValue: {fileID: 0}
-  bbb:
-    m_InternalValue:
-      internalValue: {fileID: 1797220736}
-  ccc:
-    m_InternalValue: 33
-  ddd:
-    m_InternalValue:
-      internalValue: retretreteryjjhfhrt
+  aa:
+    m_List:
+    - internalValue: {fileID: 0}
+  bb:
+    m_List:
+    - internalValue: fgdfgfgfd
 --- !u!1 &2138677391
 GameObject:
   m_ObjectHideFlags: 0

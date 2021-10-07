@@ -22,9 +22,10 @@ namespace Unity.Netcode.Addons
             assetToGlobal = new Dictionary<UnityObject, uint>();
 
             foreach (var manifest in initialManifests)
-            {
-                AddAssetsFromManifest(manifest);
-            }
+                if (manifest != null)
+                {
+                    AddAssetsFromManifest(manifest);
+                }
 
             Singleton = this;
         }
