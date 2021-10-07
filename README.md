@@ -11,7 +11,7 @@ This is my personal package for additions to the networking library. It adds som
     - NetworkVariableComponent<>
     - NetworkVariableAsset<>
     - NetworkVariableString
-- Adds NetworkListXXX types to use the Networkreference types in networked lists
+- Adds NetworkListXXX types to use the NetworkReferenceXXX types in networked lists
     - NetworkListObject
     - NetworkListComponent<>
     - NetworkListAsset<>
@@ -24,7 +24,7 @@ This is my personal package for additions to the networking library. It adds som
     - Handles all the above referenceVariableXXX types to allow assigning references in inspector
     - Handles all types usable with NetworkVariable<> including custom struct types
 - Adds PropertyDrawer for my NetworkListXXX types
-    - Properly displays in the editor inspector
+    - Properly displays the list and its contents in the editor inspector
     - Can be altered in the editor inspector while running and changes will be networked.
 - Adds NetworkVariable<> Equivalents for some unity field attributes
     - RangeNetworkAttribute
