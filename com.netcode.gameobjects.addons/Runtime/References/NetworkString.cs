@@ -88,11 +88,7 @@ namespace Unity.Netcode.Addons
                 Debug.LogError("Failed to write");
             }
         }
-        bool IEquatable<NetworkString>.Equals(NetworkString other)
-        {
-            return internalValue == other.internalValue;
-        }
-
+ 
         unsafe int PushToBuffer()
         {
             if (internalValue == null)
@@ -135,9 +131,9 @@ namespace Unity.Netcode.Addons
         public static implicit operator NetworkString(string value)
         {
             return new NetworkString
-            {
-                internalValue = value
-            };
+            (
+                value
+            );
         }
 
         public bool Equals(NetworkString other)

@@ -11,12 +11,7 @@ namespace Assets.Code
 {
     class TestBehaviour : NetworkBehaviour
     {
-        public NetworkListObject aa = new NetworkListObject();
-        public NetworkListString bb = new NetworkListString();
+        public NetworkVariableObject obj = new NetworkVariableObject();
 
-        //public NetworkVariableObject aaa = new NetworkVariableObject();
-        //public NetworkVariableComponent<TestBehaviour> bbb = new NetworkVariableComponent<TestBehaviour>();
-        //public NetworkVariable<int> ccc = new NetworkVariable<int>();
-        //public NetworkVariableString ddd = new NetworkVariableString();
     }
 }

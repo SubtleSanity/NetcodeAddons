@@ -17,37 +17,40 @@ namespace Unity.Netcode.Addons.Editor
     [CustomPropertyDrawer(typeof(NetworkReferenceList<>), true)]
     public class NetworkListDrawer : PropertyDrawer
     {
-        private ReorderableList manifestList;
+        private ReorderableList drawList;
         private GUIContent label;
         private INetworkListNotify networkList;
+        private Type elementType;
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             var serializedObject = property.serializedObject;
             var internalProperty = property.FindPropertyRelative("m_List");
 
-            if (manifestList == null)
+            if (drawList == null)
             {
                 networkList = GetNetworkList(property) as INetworkListNotify;
+                elementType = GetElementType(GetNetworkList(property));
                 
                 this.label = label;
-                this.manifestList = new ReorderableList(
+                this.drawList = new ReorderableList(
                     serializedObject,
                     internalProperty,
                     true, true, true, true);
 
-                manifestList.drawHeaderCallback = GUI_DrawHeaderCallback;
-                manifestList.elementHeightCallback = GUI_ElementHeightCallback;
-                manifestList.drawElementCallback = GUI_DrawElementCallback;
-                manifestList.onAddCallback = GUI_OnAddCallback;
-                manifestList.onRemoveCallback = GUI_OnRemoveCallback;
-                manifestList.onReorderCallbackWithDetails = GUI_OnReorderCallbackWithDetails;
+                drawList.drawHeaderCallback = GUI_DrawHeaderCallback;
+                drawList.elementHeightCallback = GUI_ElementHeightCallback;
+                drawList.drawElementCallback = GUI_DrawElementCallback;
+                drawList.onAddCallback = GUI_OnAddCallback;
+                drawList.onRemoveCallback = GUI_OnRemoveCallback;
+                drawList.onReorderCallbackWithDetails = GUI_OnReorderCallbackWithDetails;
             }
 
 
             EditorGUI.BeginDisabledGroup(IsReadonly());
-            manifestList.DoLayoutList();
+            drawList.DoLayoutList();
             EditorGUI.EndDisabledGroup();
+
 
             serializedObject.ApplyModifiedProperties();
         }
@@ -90,6 +93,34 @@ namespace Unity.Netcode.Addons.Editor
         {
             return fieldInfo.GetValue(property.serializedObject.targetObject);
         }
+        protected Type GetElementType(object networkList)
+        {
+            var baseType = typeof(NetworkReferenceList<>);
+            var listType = networkList.GetType();
+
+            // go up the chain of inheritance to find the generic base class NetworkReferenceList<>
+            // if we hit object it means the drawer has been mis-applied to an unsupported type
+            while (listType != typeof(object))
+            {
+                listType = listType.BaseType;
+
+                // this is a generic class
+                if (listType.IsGenericType)
+                {
+                    // this is the generic base class NetworkReferenceList<>
+                    if (listType.GetGenericTypeDefinition() == baseType)
+                    {
+                        // return the generic type
+                        return listType.GetGenericArguments()[0];
+                    }
+                }
+            }
+
+            throw new Exception(
+                "Couldn't get the type of the lists elements" +
+                "Did you apply this drawer to something that doesn't inherit NetworkReferenceType<>?");
+
+        }
 
         private void GUI_DrawHeaderCallback(Rect rect)
         {
@@ -102,7 +133,7 @@ namespace Unity.Netcode.Addons.Editor
         private void GUI_DrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
         {
             rect.y += 3;
-            var entry = manifestList.serializedProperty.GetArrayElementAtIndex(index);
+            var entry = drawList.serializedProperty.GetArrayElementAtIndex(index);
 
             EditorGUI.BeginChangeCheck();
 
@@ -129,7 +160,7 @@ namespace Unity.Netcode.Addons.Editor
             // increase the length of the list by one
             list.serializedProperty.arraySize += 1;
             list.serializedProperty.serializedObject.ApplyModifiedProperties();
-
+ 
             if (IsNetworkRunning())
             {
                 // inform the list of the change

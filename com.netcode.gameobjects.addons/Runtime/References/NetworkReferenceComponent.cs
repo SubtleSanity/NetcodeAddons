@@ -101,10 +101,6 @@ namespace Unity.Netcode.Addons
                 writer.WriteValue(internalValue.NetworkBehaviourId);
             }
         }
-        bool IEquatable<NetworkReferenceComponent<T>>.Equals(NetworkReferenceComponent<T> other)
-        {
-            return internalValue == other.internalValue;
-        }
 
         public static implicit operator T(NetworkReferenceComponent<T> reference)
         {
@@ -132,7 +128,7 @@ namespace Unity.Netcode.Addons
         }
         public override string ToString()
         {
-            return string.Format("NetworkReferenceComponent: {0}", internalValue.ToString());
+            return string.Format("NetworkReferenceComponent: {0}", internalValue?.ToString() ?? "NULL");
         }
 
     }

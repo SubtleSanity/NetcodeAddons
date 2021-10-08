@@ -84,11 +84,7 @@ namespace Unity.Netcode.Addons
                 writer.WriteValueSafe(internalValue.NetworkObjectId);
             }
         }
-        bool IEquatable<NetworkReferenceObject>.Equals(NetworkReferenceObject other)
-        {
-            return internalValue == other.internalValue;
-        }
-
+ 
         public static implicit operator NetworkObject(NetworkReferenceObject reference)
         {
             return reference.internalValue;
@@ -96,9 +92,9 @@ namespace Unity.Netcode.Addons
         public static implicit operator NetworkReferenceObject(NetworkObject networkObject)
         {
             return new NetworkReferenceObject
-            {
-                internalValue = networkObject
-            };
+            (
+                networkObject
+            );
         }
 
         public bool Equals(NetworkReferenceObject other)
@@ -115,7 +111,7 @@ namespace Unity.Netcode.Addons
         }
         public override string ToString()
         {
-            return string.Format("NetworkReferenceObject: {0}", internalValue.ToString());
+            return string.Format("NetworkReferenceObject: {0}", internalValue?.ToString() ?? "NULL");
         }
 
     }

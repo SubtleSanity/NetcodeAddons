@@ -84,11 +84,7 @@ namespace Unity.Netcode.Addons
                 writer.WriteValueSafe(assetGlobalId);
             }
         }
-        bool IEquatable<NetworkReferenceAsset<T>>.Equals(NetworkReferenceAsset<T> other)
-        {
-            return internalValue == other.internalValue;
-        }
-
+    
         public static implicit operator T(NetworkReferenceAsset<T> reference)
         {
             return reference.internalValue;
@@ -115,7 +111,7 @@ namespace Unity.Netcode.Addons
         }
         public override string ToString()
         {
-            return string.Format("NetworkReferenceComponent: {0}", internalValue.ToString());
+            return string.Format("NetworkReferenceAsset: {0}", internalValue?.ToString() ?? "NULL");
         }
 
     }

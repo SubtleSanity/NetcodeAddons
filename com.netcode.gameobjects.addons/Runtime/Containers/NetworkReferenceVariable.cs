@@ -35,11 +35,6 @@ namespace Unity.Netcode.Addons
                     throw new InvalidOperationException("Client can't write to NetworkVariables");
                 }
 
-                if (EqualityComparer<T>.Default.Equals(m_InternalValue, value))
-                {
-                    return;
-                }
-
                 isDirty = true;
                 var previousValue = m_InternalValue;
                 m_InternalValue = value;
